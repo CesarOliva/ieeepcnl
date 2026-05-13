@@ -4,7 +4,7 @@ export default function Footer(){
     const year = new Date().getFullYear()
     return (
         <div className="footer-bar">
-            <strong>IEEPCNL</strong> · Instituto Estatal Electoral y de Participación Ciudadana de Nuevo León · TecNM · HackaTec {year} · <Link href="/">Inicio</Link>
+            <strong>Mi colonia participa</strong> · IEEPCNL · TecNM · HackaTec {year} · Un proyecto de DeltaHBC
         </div>
   )
 }

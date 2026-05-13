@@ -98,8 +98,11 @@ export default function LoginPage() {
                 <input type="password" className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 outline-none transition focus:border-[#1b2d5c] focus:ring-2 focus:ring-[#ffc000]/30" value={form.contrasena} onChange={handleChange('contrasena')} placeholder="Tu contraseña" autoComplete="current-password" />
               </div>
             </form>
+            <div className="sm:col-span-2  mt-4">
+              <p className="mt-1 text-sm text-neutral-500">No tienes cuenta? <a href="/register" className="font-semibold text-[#1b2d5c] hover:underline">Regístrate aquí</a></p>
+            </div>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
               <button type="submit" form="login-form" className="inline-flex items-center justify-center rounded-xl bg-[#ffc000] px-6 py-3 font-semibold text-black shadow-[0_12px_30px_rgba(255,192,0,0.28)] transition hover:bg-[#e8b300]">
                 Ingresar a la plataforma
               </button>

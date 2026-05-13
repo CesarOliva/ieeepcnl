@@ -14,4 +14,4 @@ body{font-family: 'Noto Sans', 'Segoe UI', system-ui, sans-serif;background:var(
 .btn-primary{background:var(--dorado);color:#000}
 .btn-dorado{background:var(--dorado);color:#000}
 .btn-dorado:hover{background:#ffc000cc}
-.footer-bar{text-align:center;padding:1rem;font-size:0.68rem;color:#8899aa;border-top:1px solid #d5dbe3;margin-top:1rem}
+.footer-bar{text-align:center;padding:1rem;font-size:0.8rem;color:#8899aa;border-top:1px solid #d5dbe3;margin-top:1rem}
