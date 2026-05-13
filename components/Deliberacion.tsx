@@ -39,7 +39,7 @@ export default function Deliberacion({ onNavigate }:{ onNavigate?: (v:string)=>v
         <div>
           <h3 className="font-semibold">Comentarios de vecinos</h3>
           <div className="mt-2 space-y-2">
-            {colonia.comentarios && colonia.comentarios.length>0 ? colonia.comentarios.filter((c:any)=>c.estado==='Aprobado').map((c:any)=> <ComentarioCard key={c.folio} c={c} />) : <p className="text-sm text-neutral-500">Sin comentarios aún.</p>}
+            {colonia.comentarios && colonia.comentarios.length>0 ? colonia.comentarios.map((c:any)=> <ComentarioCard key={c.folio} c={c} />) : <p className="text-sm text-neutral-500">Sin comentarios aún.</p>}
           </div>
         </div>
 

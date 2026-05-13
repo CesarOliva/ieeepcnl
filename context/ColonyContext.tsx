@@ -32,6 +32,79 @@ export function ColonyProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(SESSION_KEY, JSON.stringify(sess))
   }
 
+  // Authenticate with correo + contrasena across all colonias
+  const authLogin = (correo: string, contrasena: string) => {
+    const correoNormalizado = correo.trim().toLowerCase()
+    const contrasenaNormalizada = contrasena.trim()
+
+    // search in db
+    for (const [colKey, col] of Object.entries(db.colonias)) {
+      // admins
+      if (col.admins && Array.isArray(col.admins)) {
+        const a = col.admins.find((x:any) => String(x.correo || '').toLowerCase() === correoNormalizado && x.contrasena === contrasenaNormalizada)
+        if (a) {
+          const sess = { coloniaKey: colKey, role: 'admin', correo: a.correo, profile: a }
+          setSession(sess)
+          localStorage.setItem(SESSION_KEY, JSON.stringify(sess))
+          return { ok: true, role: 'admin', profile: a }
+        }
+      }
+      // moderadores
+      if (col.moderadores && Array.isArray(col.moderadores)) {
+        const m = col.moderadores.find((x:any) => String(x.correo || '').toLowerCase() === correoNormalizado && x.contrasena === contrasenaNormalizada)
+        if (m) {
+          const sess = { coloniaKey: colKey, role: 'moderador', correo: m.correo, profile: m }
+          setSession(sess)
+          localStorage.setItem(SESSION_KEY, JSON.stringify(sess))
+          return { ok: true, role: 'moderador', profile: m }
+        }
+      }
+      // vecinos
+      if (col.vecinos && Array.isArray(col.vecinos)) {
+        const v = col.vecinos.find((x:any) => String(x.correo || '').toLowerCase() === correoNormalizado && x.contrasena === contrasenaNormalizada)
+        if (v) {
+          const sess = { coloniaKey: colKey, role: 'vecino', correo: v.correo, profile: v }
+          setSession(sess)
+          localStorage.setItem(SESSION_KEY, JSON.stringify(sess))
+          return { ok: true, role: 'vecino', profile: v }
+        }
+      }
+    }
+
+    return { ok: false, error: 'Usuario o contraseña inválidos' }
+  }
+
+  // Register a new vecino using the password provided in the form.
+  const Register = ({ coloniaKey, role, profile }: any) => {
+    const pass = String(profile.contrasena || '').trim()
+    if (!pass) {
+      return { ok: false, error: 'La contraseña es obligatoria' }
+    }
+
+    setDb((prev:any)=>{
+      const next = JSON.parse(JSON.stringify(prev))
+      next.colonias[coloniaKey].vecinos = next.colonias[coloniaKey].vecinos || []
+      const id = `v-${Date.now()}`
+      const usuario = (profile.correo || profile.usuario || '').split('@')[0] || `user${Date.now()}`
+      next.colonias[coloniaKey].vecinos.push({
+        id,
+        nombre: `${profile.nombre} ${profile.apellidos}`,
+        usuario,
+        correo: profile.correo,
+        telefono: profile.telefono,
+        contrasena: pass,
+        profile,
+      })
+      return next
+    })
+
+    const sess = { coloniaKey, role: 'vecino', usuario: profile.correo?.split('@')[0] || profile.usuario, profile }
+    setSession(sess)
+    localStorage.setItem(SESSION_KEY, JSON.stringify(sess))
+
+    return { ok: true }
+  }
+
   const logout = () => {
     setSession(null)
     localStorage.removeItem(SESSION_KEY)
@@ -44,7 +117,7 @@ export function ColonyProvider({ children }: { children: React.ReactNode }) {
   }, [db])
 
   return (
-    <ColonyContext.Provider value={{ db, setDb, session, login, logout, isHydrated }}>
+    <ColonyContext.Provider value={{ db, setDb, session, login, logout, authLogin, Register, isHydrated }}>
       {children}
     </ColonyContext.Provider>
   )

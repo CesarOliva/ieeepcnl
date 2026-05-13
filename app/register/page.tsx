@@ -5,67 +5,69 @@ import { useRouter } from 'next/navigation'
 import { useColony } from '@/context/ColonyContext'
 import { toast } from 'sonner'
 
-function validateCURP(curp: string): { valid: boolean; error?: string } {
-  const curpUpper = curp.toUpperCase().trim()
+// Valida formato, fecha y edad mínima del CURP cuando el usuario lo proporciona.
+// function validateCURP(curp: string): { valid: boolean; error?: string } {
+//   const curpUpper = curp.toUpperCase().trim()
 
-  // Validar que tenga exactamente 18 caracteres
-  if (curpUpper.length !== 18) {
-    return { valid: false, error: 'El CURP debe tener 18 caracteres.' }
-  }
+//   // Validar que tenga exactamente 18 caracteres
+//   if (curpUpper.length !== 18) {
+//     return { valid: false, error: 'El CURP debe tener 18 caracteres.' }
+//   }
 
-  // El CURP tiene formato: 6 letras + 8 números (YYMMDD) + 3 letras + 1 número
-  const curpPattern = /^[A-Z]{6}\d{8}[A-Z]{3}\d{1}$/
-  if (!curpPattern.test(curpUpper)) {
-    return { valid: false, error: 'El formato del CURP no es válido.' }
-  }
+//   // El CURP tiene formato: 6 letras + 8 números (YYMMDD) + 3 letras + 1 número
+//   const curpPattern = /^[A-Z]{6}\d{8}[A-Z]{3}\d{1}$/
+//   if (!curpPattern.test(curpUpper)) {
+//     return { valid: false, error: 'El formato del CURP no es válido.' }
+//   }
 
-  // Extraer la fecha: caracteres 4-10 son YYMMDD
-  const yearStr = curpUpper.substring(4, 6)
-  const monthStr = curpUpper.substring(6, 8)
-  const dayStr = curpUpper.substring(8, 10)
+//   // Extraer la fecha: caracteres 4-10 son YYMMDD
+//   const yearStr = curpUpper.substring(4, 6)
+//   const monthStr = curpUpper.substring(6, 8)
+//   const dayStr = curpUpper.substring(8, 10)
 
-  const year = parseInt(yearStr, 10)
-  const month = parseInt(monthStr, 10)
-  const day = parseInt(dayStr, 10)
+//   const year = parseInt(yearStr, 10)
+//   const month = parseInt(monthStr, 10)
+//   const day = parseInt(dayStr, 10)
 
-  // Determinar el siglo (si YY > 30 es 19XX, si no es 20XX)
-  const fullYear = year > 30 ? 1900 + year : 2000 + year
+//   // Determinar el siglo (si YY > 30 es 19XX, si no es 20XX)
+//   const fullYear = year > 30 ? 1900 + year : 2000 + year
 
-  // Validar que el mes sea válido
-  if (month < 1 || month > 12) {
-    return { valid: false, error: 'El mes en el CURP no es válido.' }
-  }
+//   // Validar que el mes sea válido
+//   if (month < 1 || month > 12) {
+//     return { valid: false, error: 'El mes en el CURP no es válido.' }
+//   }
 
-  // Validar que el día sea válido
-  const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-  const isLeapYear = (fullYear % 4 === 0 && fullYear % 100 !== 0) || fullYear % 400 === 0
-  if (isLeapYear) daysInMonth[1] = 29
+//   // Validar que el día sea válido
+//   const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+//   const isLeapYear = (fullYear % 4 === 0 && fullYear % 100 !== 0) || fullYear % 400 === 0
+//   if (isLeapYear) daysInMonth[1] = 29
 
-  if (day < 1 || day > daysInMonth[month - 1]) {
-    return { valid: false, error: 'El día en el CURP no es válido.' }
-  }
+//   if (day < 1 || day > daysInMonth[month - 1]) {
+//     return { valid: false, error: 'El día en el CURP no es válido.' }
+//   }
 
-  // Validar edad: debe ser mayor de 18 años
-  const birthDate = new Date(fullYear, month - 1, day)
-  const today = new Date()
-  let age = today.getFullYear() - birthDate.getFullYear()
-  const monthDiff = today.getMonth() - birthDate.getMonth()
+//   // Validar edad: debe ser mayor de 18 años
+//   const birthDate = new Date(fullYear, month - 1, day)
+//   const today = new Date()
+//   let age = today.getFullYear() - birthDate.getFullYear()
+//   const monthDiff = today.getMonth() - birthDate.getMonth()
 
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--
-  }
+//   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+//     age--
+//   }
 
-  if (age < 18) {
-    return { valid: false, error: 'Debes ser mayor de 18 años para registrarte.' }
-  }
+//   if (age < 18) {
+//     return { valid: false, error: 'Debes ser mayor de 18 años para registrarte.' }
+//   }
 
-  return { valid: true }
-}
+//   return { valid: true }
+// }
 
 type RegisterFormState = {
   nombre: string
   apellidos: string
   curp: string
+  contrasena: string
   correo: string
   telefono: string
   municipio: string
@@ -80,6 +82,7 @@ const initialFormState: RegisterFormState = {
   nombre: '',
   apellidos: '',
   curp: '',
+  contrasena: '',
   correo: '',
   telefono: '',
   municipio: '',
@@ -115,7 +118,7 @@ export default function RegisterPage() {
     const requiredFields: Array<keyof RegisterFormState> = [
       'nombre',
       'apellidos',
-      'curp',
+      'contrasena',
       'correo',
       'telefono',
       'municipio',
@@ -135,25 +138,31 @@ export default function RegisterPage() {
       return
     }
 
-    const curpValidation = validateCURP(form.curp)
-    if (!curpValidation.valid) {
-      toast.error(curpValidation.error || 'CURP inválido.')
-      return
-    }
+    // if (form.curp.trim()) {
+    //   const curpValidation = validateCURP(form.curp)
+    //   if (!curpValidation.valid) {
+    //     toast.error(curpValidation.error || 'CURP inválido.')
+    //     return
+    //   }
+    // }
 
     if (!form.privacidad) {
       toast.error('Debes aceptar la política de privacidad para registrarte.')
       return
     }
 
-    Register({
+    const res = Register({
       coloniaKey,
       role: 'vecino',
       profile: form,
     })
 
-    toast.success('Datos guardados. Bienvenido/a.')
-    router.push('/dashboard')
+    if (res && res.ok) {
+      toast.success('Datos guardados. Bienvenido/a.')
+      router.push('/dashboard')
+    } else {
+      toast.error('No se pudo crear la cuenta.')
+    }
   }
 
   return (
@@ -207,7 +216,11 @@ export default function RegisterPage() {
                 <input className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 outline-none transition focus:border-[#1b2d5c] focus:ring-2 focus:ring-[#ffc000]/30" value={form.apellidos} onChange={handleChange('apellidos')} placeholder="Apellido paterno y materno" />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-neutral-700">CURP (18 caracteres)</label>
+                <label className="mb-2 block text-sm font-medium text-neutral-700">Contraseña</label>
+                <input type="password" className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 outline-none transition focus:border-[#1b2d5c] focus:ring-2 focus:ring-[#ffc000]/30" value={form.contrasena} onChange={handleChange('contrasena')} placeholder="Crea tu contraseña" autoComplete="new-password" />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-neutral-700">CURP (opcional, 18 caracteres)</label>
                 <input className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 uppercase outline-none transition focus:border-[#1b2d5c] focus:ring-2 focus:ring-[#ffc000]/30" value={form.curp} onChange={handleChange('curp')} placeholder="ABCD123456HDFXXX09" maxLength={18} />
               </div>
               <div>

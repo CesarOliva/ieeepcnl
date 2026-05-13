@@ -6,17 +6,17 @@ import { useColony } from '@/context/ColonyContext'
 import { toast } from 'sonner'
 
 type LoginFormState = {
-  usuario: string
+  correo: string
   contrasena: string
 }
 
 const initialFormState: LoginFormState = {
-  usuario: '',
+  correo: '',
   contrasena: '',
 }
 
 export default function LoginPage() {
-  const { db, login } = useColony() as any
+  const { authLogin } = useColony() as any
   const router = useRouter()
   const [form, setForm] = useState<LoginFormState>(initialFormState)
 
@@ -29,20 +29,20 @@ export default function LoginPage() {
   function doLogin(event?: React.FormEvent<HTMLFormElement>) {
     event?.preventDefault()
 
-    const requiredFields: Array<keyof LoginFormState> = ['usuario', 'contrasena']
+    const requiredFields: Array<keyof LoginFormState> = ['correo', 'contrasena']
 
     const missingField = requiredFields.find(field => !form[field].trim())
 
     if (missingField) {
-      toast.error('Completa usuario y contraseña para continuar.')
+      toast.error('Completa correo y contraseña para continuar.')
       return
     }
 
-    login({
-      usuario: form.usuario,
-      role: 'vecino',
-    })
-
+    const res = authLogin(form.correo.trim(), form.contrasena.trim())
+    if (!res.ok) {
+      toast.error(res.error || 'Credenciales incorrectas')
+      return
+    }
     toast.success('Sesión iniciada.')
     router.push('/dashboard')
   }
@@ -90,8 +90,8 @@ export default function LoginPage() {
 
             <form id="login-form" className="grid gap-4 sm:grid-cols-2" onSubmit={doLogin}>
               <div>
-                <label className="mb-2 block text-sm font-medium text-neutral-700">Usuario</label>
-                <input className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 outline-none transition focus:border-[#1b2d5c] focus:ring-2 focus:ring-[#ffc000]/30" value={form.usuario} onChange={handleChange('usuario')} placeholder="Tu usuario" autoComplete="username" />
+                <label className="mb-2 block text-sm font-medium text-neutral-700">Correo</label>
+                <input type="email" className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 outline-none transition focus:border-[#1b2d5c] focus:ring-2 focus:ring-[#ffc000]/30" value={form.correo} onChange={handleChange('correo')} placeholder="tu@correo.com" autoComplete="email" />
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-neutral-700">Contraseña</label>

@@ -1,6 +1,7 @@
 import React from 'react'
 import { useColony } from '@/context/ColonyContext'
 import { Clock } from 'lucide-react'
+import ComentarioCard from './ComentarioCard'
 
 function msToStr(ms:number){
   const sec = Math.floor(ms/1000)
@@ -15,12 +16,34 @@ function msToStr(ms:number){
 }
 
 export default function VecinoPanel({ onNavigate }: { onNavigate:(v:string)=>void }){
-  const { db }: any = useColony()
+  const { db, setDb, session }: any = useColony()
   const coloniaKey = Object.keys(db.colonias)[0]
   const d = db.colonias[coloniaKey]
+  const [comentario, setComentario] = React.useState('')
 
   const prox = d.convocatorias.find((c:any)=>c.estado==='Próxima')
   const [timeLeft, setTimeLeft] = React.useState<string | null>(null)
+
+  function agregarComentario() {
+    const texto = comentario.trim()
+    if (!texto) return
+
+    setDb((prev:any) => {
+      const next = JSON.parse(JSON.stringify(prev))
+      const colonia = next.colonias[coloniaKey]
+      colonia.comentarios = colonia.comentarios || []
+      colonia.comentarios.unshift({
+        folio: `FOL-${Date.now()}`,
+        texto,
+        fecha: new Date().toISOString().slice(0, 10),
+        estado: 'Publicado',
+        autor: session?.usuario || session?.profile?.nombre || 'Vecino',
+      })
+      return next
+    })
+
+    setComentario('')
+  }
 
   React.useEffect(()=>{
     if (!prox) { setTimeLeft(null); return }
@@ -86,6 +109,31 @@ export default function VecinoPanel({ onNavigate }: { onNavigate:(v:string)=>voi
           </div>
         </div>
       </aside>
+      <div className="bg-white rounded-2xl p-5 shadow-soft col-span-1 lg:col-span-2">
+        <h3 className="text-xl font-semibold text-neutral-800 mb-4">Comentarios de vecinos</h3>
+        <div className="mb-4 space-y-3">
+          <textarea
+            value={comentario}
+            onChange={(e) => setComentario(e.target.value)}
+            placeholder="Escribe un comentario para tu colonia..."
+            className="w-full min-h-[96px] rounded-xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 outline-none focus:border-[#ffc000] focus:ring-2 focus:ring-[#ffc000]/20"
+          />
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={agregarComentario}
+              className="inline-flex items-center px-4 py-2 rounded-full bg-[#ffc000] text-black font-semibold text-sm hover:bg-[#ffc000]/80 transition-colors"
+            >
+              Agregar comentario
+            </button>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {d.comentarios && d.comentarios.length > 0
+            ? d.comentarios.map((c:any) => <ComentarioCard key={c.folio} c={c} />)
+            : <p className="text-sm text-neutral-500">Sin comentarios aún.</p>}
+        </div>
+      </div>
     </div>
   )
 }

@@ -7,7 +7,18 @@ export const initialDB = {
       viviendas: 220,
       padronCerrado: true,
       fechaCierre: '2026-08-10',
-      admins: [{ id: 'a1', nombre: 'Carlos Méndez', correo: 'admin@lomas.com', inicio: '2026-03-01', activo: true }],
+      admins: [{ id: 'a1', nombre: 'Carlos Méndez', usuario: 'carlos', correo: 'admin@lomas.com', contrasena: 'admin123', inicio: '2026-03-01', activo: true }],
+      moderadores: [
+        { id: 'm1', nombre: 'Laura Moreno', usuario: 'lauram', correo: 'laura.moreno@lomas.com', contrasena: 'mod123', activo: true }
+      ],
+      vecinos: [
+        { id: 'v1', nombre: 'Juan García', usuario: 'jgarcia', correo: 'juan.garcia@email.com', contrasena: 'vecino123', telefono: '8118234567' },
+        { id: 'v2', nombre: 'María López', usuario: 'mlopez', correo: 'maria.lopez@email.com', telefono: '8112345678' },
+        { id: 'v3', nombre: 'Carlos Rodríguez', usuario: 'crodriguez', correo: 'carlos.rodriguez@email.com', telefono: '8119876543' },
+        { id: 'v4', nombre: 'Ana Martínez', usuario: 'amartinez', correo: 'ana.martinez@email.com', telefono: '8115554321' },
+        { id: 'v5', nombre: 'Luis Fernández', usuario: 'lfernandez', correo: 'luis.fernandez@email.com', telefono: '8114443322' },
+        { id: 'v6', nombre: 'Andre Anzures', usuario: 'andre', correo: 'cesaremilio2208@gmail.com', contrasena: 'andre', telefono: '8114443322' }
+      ],
       convocatorias: [
         { id: 'CONV-001', tema: 'Elección de Mesa Directiva y Priorización de Problemas', tipo: 'Elección + Priorización', fecha: '2026-08-16', horario: '9:00 - 14:00', lugar: 'Palapa del parque central', modalidad: 'Presencial', estado: 'Finalizada', metodoVotacion: 'Mayoría simple (planilla)', metodoPriorizacion: 'Puntaje ponderado (2pts / 1pt)' },
         { id: 'CONV-002', tema: 'Aprobación de cuota extraordinaria para portones', tipo: 'Aprobación de cuota', fecha: '2026-09-30', horario: '18:00 - 20:00', lugar: 'Virtual (Zoom)', modalidad: 'Híbrida', estado: 'Próxima', metodoVotacion: 'Mayoría simple (Sí/No)' }
