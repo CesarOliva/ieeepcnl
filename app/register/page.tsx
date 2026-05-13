@@ -73,6 +73,7 @@ type RegisterFormState = {
   cp: string
   calle: string
   numero: string
+  privacidad: boolean
 }
 
 const initialFormState: RegisterFormState = {
@@ -86,6 +87,7 @@ const initialFormState: RegisterFormState = {
   cp: '',
   calle: '',
   numero: '',
+  privacidad: false,
 }
 
 export default function RegisterPage() {
@@ -99,6 +101,12 @@ export default function RegisterPage() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setForm(prev => ({ ...prev, [field]: event.target.value }))
+  }
+
+  const handleCheckboxChange = (field: keyof RegisterFormState) => (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setForm(prev => ({ ...prev, [field]: event.target.checked }))
   }
 
   function doRegister(event?: React.FormEvent<HTMLFormElement>) {
@@ -117,7 +125,10 @@ export default function RegisterPage() {
       'numero',
     ]
 
-    const missingField = requiredFields.find(field => !form[field].trim())
+    const missingField = requiredFields.find(field => {
+      const val = form[field as keyof RegisterFormState]
+      return typeof val === 'string' ? !val.trim() : false
+    })
 
     if (missingField) {
       toast.error('Completa todos los campos para continuar.')
@@ -127,6 +138,11 @@ export default function RegisterPage() {
     const curpValidation = validateCURP(form.curp)
     if (!curpValidation.valid) {
       toast.error(curpValidation.error || 'CURP inválido.')
+      return
+    }
+
+    if (!form.privacidad) {
+      toast.error('Debes aceptar la política de privacidad para registrarte.')
       return
     }
 
@@ -222,6 +238,13 @@ export default function RegisterPage() {
                 <div>
                   <label className="mb-2 block text-sm font-medium text-neutral-700">Número</label>
                   <input inputMode="numeric" className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 outline-none transition focus:border-[#1b2d5c] focus:ring-2 focus:ring-[#ffc000]/30" value={form.numero} onChange={handleChange('numero')} placeholder="123" />
+                </div>
+              </div>
+              <div className="sm:col-span-2 mt-2">
+                <label className="mb-2 block text-sm font-medium text-neutral-700">Autoriza aviso de privacidad</label>
+                <div className="flex items-center gap-3">
+                  <input id="privacidad" type="checkbox" checked={form.privacidad} onChange={handleCheckboxChange('privacidad')} className="h-4 w-4 rounded text-[#1b2d5c]" />
+                  <label htmlFor="privacidad" className="text-sm">Acepto la <a href="/privacy" className="text-blue-600 underline">política de privacidad</a></label>
                 </div>
               </div>
             </form>
