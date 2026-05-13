@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEEPC - Tecnologías para la gestión pública</title>
+    <meta name="description" content="IEEPC - Tecnologías para la gestión pública">
+    <link rel="icon" type="image/png" href="/imagenes/logoCropped.png"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="fixed w-full top-0 z-50 bg-white border-b border-neutral-200 py-4">
+        <div class="max-w-7xl flex w-full justify-between items-center mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center gap-2">
+                        <img src="/imagenes/logoCropped.png" alt="Logo" class="size-16"/>
+                        <span class="font-bold text-xl tracking-tight text-neutral-900">Foro IEEPCNL</span>
+                    </a>
+                </div>
+            </div>
+
+            <div className="flex flex-col items-center justify-center text-center">
+                <h1 class="text-center font-semibold text-xl">🏘️ Mi Colonia Participa</h1>
+                <div class="text-center text-neutral-500">Plataforma de Participación Vecinal</div>
+            </div>
+
+            <div>
+                <button class="btn btn-dorado btn-sm" onclick="mostrarLogin()">🔐 Ingresar</button>
+                <button class="btn btn-sm" style="background:#fff;color:var(--azul-ieepc);margin-left:0.3rem;" id="btnRegistrarColonia" onclick="mostrarRegistro()">➕ Registrar colonia</button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-[180px] md:pt-32 pb-12 flex flex-col lg:flex-row gap-8 min-h-dvh" id="mainContainer">
+        <!-- LANDING -->
+        <div id="landingScreen">
+            <div class="card">
+                <h2>✨ Organiza tu colonia sin tanto rollo</h2>
+                <p style="font-size:0.95rem;margin-bottom:1rem;">Herramienta gratuita para juntas vecinales, comités de colonos y mesas directivas. Convocá, votá y dalé seguimiento a tus decisiones con transparencia.</p>
+                <div class="grid-3" style="margin:1.5rem 0;">
+                    <div class="stat-box">
+                        <div class="number">📋</div>
+                        <strong>Padrón confiable</strong>
+                        <div class="label">Registrá vecinos, evitá duplicados.</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">🗳️</div>
+                        <strong>Voto secreto</strong>
+                        <div class="label">Una vivienda = un voto.</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">📄</div>
+                        <strong>Actas automáticas</strong>
+                        <div class="label">Resultados y seguimiento.</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block" onclick="mostrarRegistro()">➕ Registrar mi colonia</button>
+            </div>
+            <div class="card">
+                <h2>🏛️ Respaldo del IEEPCNL</h2>
+                <p style="font-size:0.9rem;">El Instituto Estatal Electoral y de Participación Ciudadana de Nuevo León avala esta plataforma para procesos vecinales transparentes, con certeza y legalidad.</p>
+            </div>
+        </div>
+
+        <!-- REGISTRO DE COLONIA -->
+        <div id="registroScreen" class="hidden">
+            <div class="card">
+                <h2>➕ Registrar nueva colonia</h2>
+                <p class="alert alert-info">Solo un administrador puede dar de alta colonias. Se requiere nombre y código postal para evitar duplicados.</p>
+                <div class="grid-2">
+                    <div class="form-group"><label>Nombre de la colonia</label><input id="regNombre" placeholder="Ej: Las Lomas del Sur"></div>
+                    <div class="form-group"><label>Código Postal</label><input id="regCP" placeholder="64720"></div>
+                    <div class="form-group"><label>Municipio</label><select id="regMunicipio"><option>Monterrey</option><option>San Pedro Garza García</option><option>Guadalupe</option><option>Apodaca</option><option>Santa Catarina</option><option>Escobedo</option></select></div>
+                    <div class="form-group"><label>N° aproximado de viviendas</label><input id="regViv" type="number" placeholder="220"></div>
+                    <div class="form-group"><label>Correo del primer administrador</label><input id="regCorreo" type="email" placeholder="admin@colonia.com"></div>
+                    <div class="form-group"><label>Contraseña</label><input id="regPass" type="password"></div>
+                    <div class="form-group"><label>Confirmar contraseña</label><input id="regPass2" type="password"></div>
+                </div>
+                <div class="form-group"><label><input type="checkbox" id="regAcepta"> Acepto el aviso de privacidad y uso de datos para fines vecinales.</label></div>
+                <button class="btn btn-primary" onclick="registrarColonia()">✅ Registrar colonia</button>
+                <button class="btn btn-outline" style="margin-left:0.5rem;" onclick="mostrarLanding()">← Volver al inicio</button>
+            </div>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="loginScreen" class="hidden">
+            <div class="card login-box">
+                <h2>🔐 Ingresar a tu colonia</h2>
+                <div class="form-group"><label>Colonia</label><select id="loginColonia"></select></div>
+                <div class="form-group"><label>Rol</label><select id="loginRol">
+                        <option value="admin">Administrador/a (Mesa Directiva)</option>
+                        <option value="vecino">Vecino/a (Votante)</option>
+                        <option value="moderador">Moderador/a</option>
+                </select></div>
+                <button class="btn btn-primary btn-block" onclick="iniciarSesion()">Ingresar</button>
+                <button class="btn btn-outline btn-block" style="margin-top:0.5rem;" onclick="mostrarLanding()">← Volver al inicio</button>
+            </div>
+        </div>
+
+        <!-- PLATAFORMA INTERNA -->
+        <div id="plataformaInterna" class="hidden w-full">
+            <div class="w-full py-3 bg-[#ffc000]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between flex flex-col md:flex-row gap-3">
+                    <div class="flex w-full md:w-auto items-center gap-3">
+                        <span id="nombreColoniaDisplay" class="font-bold text-neutral-900">Las Lomas del Sur</span>
+                        <span id="rolDisplay" class="text-sm text-neutral-800 bg-white/80 px-2 py-1 rounded-md">Admin</span>
+                    </div>
+                    <div class="flex w-full md:w-auto items-center gap-2">
+                        <button class="px-3 py-1 rounded-md bg-white text-neutral-900 text-sm font-semibold" onclick="irSeccion('dashboard')">📊 Panel</button>
+                        <button class="px-3 py-1 rounded-md bg-white text-neutral-900 text-sm font-semibold" onclick="irSeccion('convocatorias')">📢 Convocatorias</button>
+                        <button class="px-3 py-1 rounded-md bg-white/70 text-neutral-900 text-sm font-semibold" onclick="cerrarSesion()">Cerrar Sesión</button>
+                    </div>
+                </div>
+            </div>
+            <div style="padding:1.5rem 0;" id="dynamicContent"></div>
+        </div>
+    </div>
+    <div class="footer-bar">
+        <strong>IEEPCNL</strong> · Instituto Estatal Electoral y de Participación Ciudadana de Nuevo León · TecNM · HackaTec 2026 · Reto: Pongámonos de Acuerdo sin Tanto Rollo
+    </div>
+
+    <script src="script.js"></script>
+    <script src="vecinos.js"></script>
+    <script src="moderador.js"></script>
+    <script src="administrador.js"></script>
+</body>
+</html>

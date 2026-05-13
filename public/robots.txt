@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: /sitemap.xml
+
+# Disallow crawling of internal test pages
+Disallow: /admin/
+Disallow: /api/
