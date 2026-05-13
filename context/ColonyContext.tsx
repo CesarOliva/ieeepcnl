@@ -24,8 +24,10 @@ export function ColonyProvider({ children }: { children: React.ReactNode }) {
     setIsHydrated(true)
   }, [])
 
-  const login = (coloniaKey: string, role: string) => {
-    const sess = { coloniaKey, role, timestamp: Date.now() }
+  const login = (coloniaKeyOrSession: string | Record<string, any>, role?: string) => {
+    const sess = typeof coloniaKeyOrSession === 'string'
+      ? { coloniaKey: coloniaKeyOrSession, role, timestamp: Date.now() }
+      : { ...coloniaKeyOrSession, timestamp: Date.now() }
     setSession(sess)
     localStorage.setItem(SESSION_KEY, JSON.stringify(sess))
   }

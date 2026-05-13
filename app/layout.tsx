@@ -59,7 +59,7 @@ export default function RootLayout({
       <body className={poppins.className}>
         <ColonyProvider>
           <Header />
-          <main className="container mx-auto px-4 py-8 mt-28 min-h-screen">
+          <main className="container mx-auto px-4 py-8 mt-20 md:mt-28 min-h-screen">
             {children}
           </main>
           <Footer />

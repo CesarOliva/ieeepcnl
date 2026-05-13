@@ -14,15 +14,14 @@ export default function Header(){
           <img src="/imagenes/logoCropped.png" alt="Logo" style={{width:36, height:36}}/>
           <div className="font-bold text-xl">Foro IEEPCNL</div>
         </div>
-        <div className="text-center">
+        <div className="text-center hidden md:block">
           <h1 className="text-center font-semibold text-xl">🏘️ Mi Colonia Participa</h1>
           <div className="text-center text-neutral-500">Plataforma de Participación Vecinal</div>
         </div>
         <div className='flex flex-col items-end'>
           {!isHydrated || !session?.role ? (
             <>
-              <button className="btn btn-dorado btn-sm mr-2" onClick={()=>router.push('/login')}>🔐 Ingresar</button>
-              <button className="btn btn-sm" onClick={()=>router.push('/register')}>➕ Registrar colonia</button>
+              <button className="btn btn-dorado btn-sm mr-2 text-md" onClick={()=>router.push('/login')}>Iniciar sesión</button>
             </>
           ) : (
             <div className="flex items-center gap-2">
